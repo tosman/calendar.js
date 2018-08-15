@@ -1,8 +1,8 @@
-import * as React from 'react';
-import './App.css';
-import Calendar from './calendar/calendar';
+import * as React from "react";
+import "./App.css";
+import Calendar from "./calendar/Calendar";
 
-import logo from './logo.svg';
+import logo from "./logo.svg";
 
 class App extends React.Component {
   public render() {
@@ -12,7 +12,7 @@ class App extends React.Component {
           <img src={logo} className="App-logo" alt="logo" />
           <h1 className="App-title">Welcome to React</h1>
         </header>
-        <Calendar/>
+        <Calendar />
       </div>
     );
   }
