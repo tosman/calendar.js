@@ -16,32 +16,33 @@ const CalendarDay = styled.div`
   flex-basis: 12.5%;
 `;
 export default class Calendar extends React.PureComponent {
+  state = {
+    currentDate: moment()
+  };
+
   private getWeekdays(i: number) {
+    if (i > 6) return;
     return moment.weekdays(i);
   }
 
   private getDaysInMonth() {
     // total days to show = 7 * 5 = 35
-    let prevMonthDays = moment()
+    let prevMonthDays = this.state.currentDate
+      .clone()
       .startOf("month")
       .subtract(1, "months")
       .startOf("month")
       .daysInMonth();
 
-    // let currMonthDays = moment()
-    //   .startOf("month")
-    //   .add(1, "months")
-    //   .endOf("month")
-    //   .daysInMonth();
-
-    let date = moment();
+    let date = this.state.currentDate.clone();
     let currMonthDays = date.daysInMonth();
-    let currWeekDay = date.startOf("month").day();
+    let currStartWeekDay = date.startOf("month").day();
+    let currEndWeekDay = date.endOf("month").day();
 
     let daysToShow = [];
 
     // add prev month days
-    for (let i = currWeekDay - 1; i >= 0; i--) {
+    for (let i = currStartWeekDay - 1; i >= 0; i--) {
       daysToShow.push(prevMonthDays - i);
     }
 
@@ -51,28 +52,43 @@ export default class Calendar extends React.PureComponent {
     }
 
     // add next month days
-    for (let i = 0; i < 35 - daysToShow.length; i++) {
+    for (let i = 0; i < 7 - currEndWeekDay - 1; i++) {
       daysToShow.push(i + 1);
     }
 
     return daysToShow;
   }
-
-  // getWeekDayStartOfMonth(){
-  //     return moment().
-  // }
-
+  today() {
+    let date = moment();
+    this.setState({ currentDate: date });
+  }
+  prevMonth() {
+    let date = this.state.currentDate.clone().subtract(1, "month");
+    this.setState({ currentDate: date });
+  }
+  nextMonth() {
+    let date = this.state.currentDate.clone().add(1, "month");
+    this.setState({ currentDate: date });
+  }
   render() {
     let days = this.getDaysInMonth();
 
     return (
-      <CalendarContainer>
-        {days.map((value, i) => (
-          <CalendarDay>
-            {value} {this.getWeekdays(i % 7)}
-          </CalendarDay>
-        ))}
-      </CalendarContainer>
+      <React.Fragment>
+        {this.state.currentDate.format("MMMM, YYYY")}
+        <div>
+          <button onClick={this.today.bind(this)}> Today </button>
+          <button onClick={this.prevMonth.bind(this)}> - </button>
+          <button onClick={this.nextMonth.bind(this)}> + </button>
+        </div>
+        <CalendarContainer>
+          {days.map((value, i) => (
+            <CalendarDay>
+              {value} {this.getWeekdays(i)}
+            </CalendarDay>
+          ))}
+        </CalendarContainer>
+      </React.Fragment>
     );
   }
 }
